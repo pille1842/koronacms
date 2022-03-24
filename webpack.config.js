@@ -20,6 +20,7 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
+    .addStyleEntry('tailwind', './assets/styles/tailwind.css')
     .addEntry('app', './assets/app.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
@@ -70,6 +71,11 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
+    .enablePostCssLoader((options) => {
+        options.postcssOptions = {
+            path: './postcss.config.js'
+        }
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();
