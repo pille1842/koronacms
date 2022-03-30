@@ -5,9 +5,11 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
@@ -16,34 +18,48 @@ use Symfony\Component\Serializer\Annotation\Groups;
     denormalizationContext: ['groups' => ['write']],
     collectionOperations: [
         "get",
-        "post" => ["security" => "is_granted('ROLE_ADMIN')"],
+        "post" => ["security" => "is_granted('ROLE_EDIT_USERS')"],
     ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_ADMIN') or object == user"],
-        "patch" => ["security" => "is_granted('ROLE_ADMIN') or object == user"],
+        "put" => ["security" => "is_granted('ROLE_EDIT_USERS') or object == user"],
+        "patch" => ["security" => "is_granted('ROLE_EDIT_USERS') or object == user"],
     ],
 )]
+#[UniqueEntity('username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const ROLES = [
+        'ROLE_EDIT_USERS',
+        'ROLE_USER',
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups(["read"])]
+    #[Assert\Positive()]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Groups(["read", "write"])]
+    #[Assert\NotBlank]
     private $username;
 
     #[ORM\Column(type: 'json')]
     #[Groups(["read", "write"])]
+    #[Assert\Type('array')]
+    #[Assert\Choice(
+        choices: self::ROLES,
+        multiple: true,
+    )]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
     private $password;
 
     #[Groups(["write"])]
+    #[Assert\NotCompromisedPassword()]
     private $plainPassword;
 
     #[ORM\Column(type: 'datetime_immutable')]
