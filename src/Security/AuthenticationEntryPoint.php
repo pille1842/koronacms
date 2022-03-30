@@ -24,7 +24,7 @@ class AuthenticationEntryPoint implements AuthenticationEntryPointInterface
             $request->isXmlHttpRequest() ||
             false === array_search('text/html', $request->getAcceptableContentTypes())
         ) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'Unauthorized');
+            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'Unauthorized.');
         }
 
         return new RedirectResponse($this->urlGenerator->generate('login'));
