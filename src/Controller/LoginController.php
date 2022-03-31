@@ -21,6 +21,14 @@ class LoginController extends AbstractController
         ]);
     }
 
+    #[Route('/api/login', name: 'api_login')]
+    public function apiLogin()
+    {
+        return $this->json([
+            'user' => $this->getUser() ? $this->getUser()->getUserIdentifier() : null,
+        ]);
+    }
+
     #[Route("/logout", name: 'logout')]
     public function logout(): void
     {
