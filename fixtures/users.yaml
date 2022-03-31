@@ -1,0 +1,13 @@
+App\Entity\User:
+    user_1:
+        username: admin
+        plainPassword: 12345
+        roles: ['ROLE_USER', 'ROLE_EDIT_USERS']
+    user_2:
+        username: johndoe
+        plainPassword: 12345
+        roles: ['ROLE_USER']
+    user_{3..100}:
+        username: <username()>
+        plainPassword: <word()>
+        roles: ['ROLE_USER']
