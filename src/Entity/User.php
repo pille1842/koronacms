@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
     attributes: ["security" => "is_granted('ROLE_USER')"],
-    normalizationContext: ['groups' => ['read']],
-    denormalizationContext: ['groups' => ['write']],
+    normalizationContext: ['groups' => ['user:output']],
+    denormalizationContext: ['groups' => ['user:input']],
     collectionOperations: [
         "get",
         "post" => ["security" => "is_granted('ROLE_EDIT_USERS')"],
@@ -37,17 +37,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["read"])]
+    #[Groups(["user:output"])]
     #[Assert\Positive()]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(["read", "write"])]
+    #[Groups(["user:output", "user:input"])]
     #[Assert\NotBlank]
     private $username;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(["read", "write"])]
+    #[Groups(["user:output", "admin:input"])]
     #[Assert\Type('array')]
     #[Assert\Choice(
         choices: self::ROLES,
@@ -58,16 +58,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private $password;
 
-    #[Groups(["write"])]
+    #[Groups(["user:input"])]
     #[Assert\NotCompromisedPassword()]
     private $plainPassword;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(["read"])]
+    #[Groups(["user:output"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(["read"])]
+    #[Groups(["user:output"])]
     private $updatedAt;
 
     public function getId(): ?int
