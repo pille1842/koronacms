@@ -257,4 +257,27 @@ class UserTest extends LoggedInTestCase
             'hydra:description' => 'Unauthorized.',
         ]);
     }
+
+    public function testCannotDeleteUsers(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['username' => 'johndoe'])
+        ;
+
+        // Test as admin
+        $client = $this->getAdminClient();
+        $client->request('DELETE', "/api/users/{$user->getId()}");
+        $this->assertResponseStatusCodeSame(405); // Method not allowed
+
+        // Test as regular user
+        $client = $this->getRegularClient();
+        $client->request('DELETE', "/api/users/{$user->getId()}");
+        $this->assertResponseStatusCodeSame(405); // Method not allowed
+
+        // Test as anonymous user
+        $client = static::createClient();
+        $client->request('DELETE', "/api/users/{$user->getId()}");
+        $this->assertResponseStatusCodeSame(405); // Method not allowed
+    }
 }
