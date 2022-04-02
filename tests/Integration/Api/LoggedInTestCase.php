@@ -7,7 +7,7 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
 
 class LoggedInTestCase extends ApiTestCase
 {
-    public function getAdminClient(): Client
+    public static function createAdminClient(): Client
     {
         $client = static::createClient();
 
@@ -19,12 +19,12 @@ class LoggedInTestCase extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseIsSuccessful();
+        self::assertResponseIsSuccessful();
 
         return $client;
     }
 
-    public function getRegularClient(): Client
+    public static function createRegularClient(): Client
     {
         $client = static::createClient();
 
@@ -36,7 +36,7 @@ class LoggedInTestCase extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseIsSuccessful();
+        self::assertResponseIsSuccessful();
 
         return $client;
     }

@@ -21,7 +21,7 @@ class UserTest extends LoggedInTestCase
 
     public function testGetCollection(): void
     {
-        $client = $this->getAdminClient();
+        $client = static::createRegularClient();
 
         $response = $client->request('GET', '/api/users');
 
@@ -57,9 +57,9 @@ class UserTest extends LoggedInTestCase
 
     public function testCreateUser(): void
     {
-        $client = $this->getAdminClient();
+        $client = static::createAdminClient();
 
-        $response = $client->request('POST', '/api/users', [
+        $client->request('POST', '/api/users', [
             'json' => [
                 'username' => 'testuser',
                 'roles' => ['ROLE_USER'],
@@ -90,7 +90,7 @@ class UserTest extends LoggedInTestCase
         $this->assertResponseIsSuccessful();
 
         // Test that regular users can't create a user
-        $client = $this->getRegularClient();
+        $client = static::createRegularClient();
         $client->request('POST', '/api/users', [
             'json' => [
                 'username' => 'testuser',
@@ -122,7 +122,7 @@ class UserTest extends LoggedInTestCase
 
     public function testGetUser(): void
     {
-        $client = $this->getRegularClient();
+        $client = static::createRegularClient();
         $user = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['username' => 'johndoe'])
@@ -153,7 +153,7 @@ class UserTest extends LoggedInTestCase
 
     public function testPutPatchUser(): void
     {
-        $client = $this->getAdminClient();
+        $client = static::createAdminClient();
 
         // Set up a regular user for this test
         $client->request('POST', '/api/users', [
@@ -195,7 +195,7 @@ class UserTest extends LoggedInTestCase
         $this->assertMatchesResourceItemJsonSchema(User::class);
 
         // Test that a regular user cannot replace a user resource...
-        $client = $this->getRegularClient();
+        $client = static::createRegularClient();
 
         $client->request('PUT', "/api/users/{$user->getId()}", [
             'json' => [
@@ -266,12 +266,12 @@ class UserTest extends LoggedInTestCase
         ;
 
         // Test as admin
-        $client = $this->getAdminClient();
+        $client = static::createAdminClient();
         $client->request('DELETE', "/api/users/{$user->getId()}");
         $this->assertResponseStatusCodeSame(405); // Method not allowed
 
         // Test as regular user
-        $client = $this->getRegularClient();
+        $client = static::createRegularClient();
         $client->request('DELETE', "/api/users/{$user->getId()}");
         $this->assertResponseStatusCodeSame(405); // Method not allowed
 
