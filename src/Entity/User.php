@@ -62,6 +62,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotCompromisedPassword()]
     private $plainPassword;
 
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(["user:output", "admin:input"])]
+    private $isEnabled = false;
+
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(["user:output"])]
     private $createdAt;
@@ -142,6 +146,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         // Temporarily change the password field so the PreUpdate listener gets called
         $this->password = null;
+
+        return $this;
+    }
+
+
+    public function getIsEnabled(): ?bool
+    {
+        return $this->isEnabled;
+    }
+
+    public function setIsEnabled(bool $isEnabled): self
+    {
+        $this->isEnabled = $isEnabled;
 
         return $this;
     }

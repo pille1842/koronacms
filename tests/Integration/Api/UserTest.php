@@ -64,6 +64,7 @@ class UserTest extends LoggedInTestCase
                 'username' => 'testuser',
                 'roles' => ['ROLE_USER'],
                 'plainPassword' => 'abcdef',
+                'isEnabled' => true,
             ],
         ]);
 
@@ -73,6 +74,7 @@ class UserTest extends LoggedInTestCase
             '@type' => 'User',
             'username' => 'testuser',
             'roles' => ['ROLE_USER'],
+            'isEnabled' => true,
         ]);
         $this->assertMatchesResourceItemJsonSchema(User::class);
 
