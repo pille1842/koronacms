@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
+use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Auditable;
+use DH\Auditor\Provider\Doctrine\Auditing\Annotation\Ignore;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -27,6 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[UniqueEntity('username')]
+#[Auditable()]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const ROLES = [
@@ -56,6 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
+    #[Ignore]
     private $password;
 
     #[Groups(["user:input"])]
@@ -68,10 +72,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(["user:output"])]
+    #[Ignore]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(["user:output"])]
+    #[Ignore]
     private $updatedAt;
 
     public function getId(): ?int
