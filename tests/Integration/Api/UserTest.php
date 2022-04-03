@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 class UserTest extends LoggedInTestCase
 {
-    private EntityManager $entityManager;
+    private ?EntityManager $entityManager;
 
     protected function setUp(): void
     {
@@ -281,5 +281,13 @@ class UserTest extends LoggedInTestCase
         $client = static::createClient();
         $client->request('DELETE', "/api/users/{$user->getId()}");
         $this->assertResponseStatusCodeSame(405); // Method not allowed
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->entityManager->close();
+        $this->entityManager = null;
     }
 }
