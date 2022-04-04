@@ -41,14 +41,31 @@ class OpenApiFactory implements OpenApiFactoryInterface
             null,
             null,
             null,
-            null,
+            new Model\Operation(
+                null,
+                ['Login'],
+                [
+                    '200' => new Model\Response(
+                        'User',
+                        new \ArrayObject([
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User-user.output',
+                                ],
+                            ],
+                        ])
+                    ),
+                ],
+                'Retrieves the currently authenticated user.',
+                'Retrieves the currently authenticated user.',
+            ),
             null,
             new Model\Operation(
                 null,
                 ['Login'],
                 [
                     '200' => new Model\Response(
-                        'Username',
+                        'User',
                         new \ArrayObject([
                             'application/json' => [
                                 'schema' => [
