@@ -95,6 +95,12 @@ class OpenApiFactory implements OpenApiFactoryInterface
             )
         ));
 
+        $openApi = $openApi->withInfo(new Model\Info(
+            'KoronaCMS API',
+            '0.1.0',
+            'API for the Korona Community Management System'
+        ));
+
         return $openApi;
     }
 }
