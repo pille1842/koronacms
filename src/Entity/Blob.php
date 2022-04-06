@@ -20,25 +20,33 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     itemOperations: [
         'get' => [
             'path' => '/blobs/{fileName}',
+            'security' => "is_granted('VIEW', object)",
         ],
     ],
     collectionOperations: [
-        'get',
         'post' => [
             'controller' => CreateBlobAction::class,
             'deserialize' => false,
             'validation_groups' => ['Default', 'blob_create'],
+            'security' => "is_granted('ROLE_USER')",
             'openapi_context' => [
                 'requestBody' => [
                     'content' => [
                         'multipart/form-data' => [
                             'schema' => [
                                 'type' => 'object',
+                                'required' => [
+                                    'file',
+                                    'document',
+                                ],
                                 'properties' => [
                                     'file' => [
                                         'type' => 'string',
                                         'format' => 'binary',
                                     ],
+                                    'document' => [
+                                        'type' => '/api/contexts/Document',
+                                    ]
                                 ],
                             ],
                         ],
@@ -50,11 +58,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 )]
 class Blob
 {
-    /*#[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;*/
-
     #[ApiProperty(iri: 'http://schema.org/contentUrl')]
     #[Groups('blob:output')]
     private ?string $contentUrl = null;
@@ -91,6 +94,11 @@ class Blob
     #[Groups('blob:output')]
     private $dimensions;
 
+    #[ORM\ManyToOne(targetEntity: Document::class, inversedBy: 'blobs')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups('blob:output')]
+    private $document;
+
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups('blob:output')]
     private $createdAt;
@@ -98,11 +106,6 @@ class Blob
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups('blob:output')]
     private $updatedAt;
-
-    /*public function getId(): ?string
-    {
-        return $this->fileName;
-    }*/
 
     public function getContentUrl(): ?string
     {
@@ -188,6 +191,18 @@ class Blob
     public function setDimensions(?array $dimensions = null): self
     {
         $this->dimensions = $dimensions;
+
+        return $this;
+    }
+
+    public function getDocument(): ?Document
+    {
+        return $this->document;
+    }
+
+    public function setDocument(?Document $document): self
+    {
+        $this->document = $document;
 
         return $this;
     }
