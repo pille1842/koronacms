@@ -1,0 +1,1 @@
+DATABASE_URL="mysql://DBUSER:DBPASSWORD@127.0.0.1:3306/DBDATABASE?serverVersion=5.7&charset=utf8mb4"
